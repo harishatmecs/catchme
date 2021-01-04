@@ -1,0 +1,354 @@
+.catchMeScreenContainer {
+  position: fixed;
+  background: #eee;
+  margin: 0px auto;
+  cursor: crosshair;
+  max-height: calc(100vh - 5px);
+  overflow: auto;
+  border: 3px solid #ff7373;
+  z-index: 99999;
+  top: 0px;
+  width: 100%;
+}
+.catchMeScreenContainer .catchMeCloseMainContainer {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ff0000;
+  border-radius: 100%;
+  background: -webkit-linear-gradient(
+      -45deg,
+      transparent 0%,
+      transparent 46%,
+      white 46%,
+      white 56%,
+      transparent 56%,
+      transparent 100%
+    ),
+    -webkit-linear-gradient(45deg, transparent 0%, transparent 46%, white 46%, white
+          56%, transparent 56%, transparent 100%);
+  background-color: #ff0000;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+.catchMeScreenContainer .capturedScreen img {
+  display: inline-block;
+  vertical-align: top;
+}
+.catchMeScreenContainer .catchMeToolbar {
+  position: fixed;
+  z-index: 9;
+  top: 3px;
+  left: 3px;
+  width: 606px;
+  height: auto;
+  border: 1px solid #ff7373;
+  border-top: none;
+  border-left: 0px;
+  border-left: 0px;
+  background: #ffffff;
+  padding: 6px;
+  padding-bottom: 0px;
+  cursor: auto;
+}
+
+.catchMeScreenContainer .catchMeToolbar .inputGroup {
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.catchMeScreenContainer .catchMeToolbar .inputGroup .catchMeSelect {
+  width: 80px;
+  height: 26px;
+  display: inline-block;
+  line-height: 26px;
+  background: #fafafa;
+  -webkit-box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  -moz-box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #666;
+  -webkit-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  border: 1px solid #ccc;
+}
+.catchMeScreenContainer .catchMeToolbar .inputGroup label {
+  font-size: 14px;
+  color: #555;
+  /* text-transform: capitalize; */
+  display: inline-block;
+  margin-bottom: 5px;
+  text-align: left;
+  padding: 0px;
+  font-weight: 600;
+  margin-right: 5px;
+  margin-left: 5px;
+}
+.catchMeScreenContainer .catchMeToolbar .inputGroup .catchMeSelect:focus {
+  outline: none;
+}
+
+.catchMeScreenContainer .catchMeToolbar ul {
+  position: relative;
+  padding: 0;
+  list-style: none;
+  transform: translateY(-50%);
+  top: 50%;
+}
+.catchMeScreenContainer .catchMeToolbar ul li {
+  height: 25px;
+}
+.catchMeInputContainer {
+  cursor: text;
+  padding: 12px 15px 5px;
+  min-height: 85px;
+  width: 226px;
+  background: rgb(255, 255, 255);
+  border-radius: 5px;
+  border: 1px solid #ff000033;
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 3px 10px 0px;
+  transition: background-color 0.2s ease 0s, border-color 0.2s ease 0s;
+  margin-bottom: 10px;
+  margin-left: 40px;
+  outline: none;
+  margin-top: 12px;
+  right: 0;
+}
+.absolute {
+  position: absolute !important;
+}
+.removeTextArea {
+  outline: none;
+  color: #222;
+  background: #ff000033;
+  transition: none;
+  background: #fff;
+  height: auto;
+  padding: 10px;
+  min-height: auto;
+}
+/* 1. Pointer shape marker */
+.cathMeCircle {
+  cursor: context-menu;
+  position: absolute;
+  background: rgba(255, 0, 0, 0.2) no-repeat 50% 50%;
+  border-radius: 50%;
+  /* background: rgba(79, 119, 255, 1) no-repeat 50% 50%; */
+  transform: translate(
+    -50%,
+    -50%
+  ); /* use translate instead of JS calculations */
+  border: 3px solid #fff;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.5);
+}
+.cathMeCircle input:focus,
+.cathMeCircle textarea:focus,
+.cathMeCircle select:focus {
+  outline: none;
+}
+.catchMeRemovePointer {
+  position: absolute;
+  top: -6px;
+  right: -13px;
+  cursor: pointer;
+  z-index: 9;
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #ff0000;
+  border-radius: 100%;
+  background: -webkit-linear-gradient(
+      -45deg,
+      transparent 0%,
+      transparent 46%,
+      white 46%,
+      white 56%,
+      transparent 56%,
+      transparent 100%
+    ),
+    -webkit-linear-gradient(45deg, transparent 0%, transparent 46%, white 46%, white
+          56%, transparent 56%, transparent 100%);
+  background-color: #ff0000;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+.cathMeRadius {
+  position: absolute;
+  width: 52px;
+}
+/* 2. Line shape marker */
+.catchMeStraightLine {
+  -webkit-transform-origin: 0 50%;
+  -moz-transform-origin: 0 50%;
+  transform-origin: 0 50%;
+  height: 3px; /* Line width of 3 */
+  background: #ff7373; /* Black fill */
+  /* opacity: 0.5;
+  box-shadow: 0 0 8px #b99b7e; */
+  /* For some nice animation on the rotates: */
+  -webkit-transition: -webkit-transform 1s;
+  -moz-transition: -moz-transform 1s;
+  transition: transform 1s;
+}
+/* .catchMeStraightLine:hover {
+  background: #c30;
+  box-shadow: 0 0 8px #c30;
+  opacity: 1;
+} */
+.catchMeStraightLine.active {
+  background: #666;
+  box-shadow: 0 0 8px #666;
+  opacity: 1;
+}
+
+/* 3. Draw any shape marker */
+.cathMeDot {
+  cursor: context-menu;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  border: 3px solid #ff7373;
+  border-radius: 50%;
+}
+.cathMeDot input:focus,
+.cathMeDot textarea:focus,
+.cathMeDot select:focus {
+  outline: none;
+}
+
+.catchMeRaiseTicketContainer {
+  width: 266px;
+  height: 250px;
+  padding: 10px;
+  position: fixed;
+  z-index: 9;
+  bottom: 9px;
+  right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff3f3;
+  box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5);
+}
+.catchMeRaiseTicketContainer .title {
+  font-size: 16px;
+  color: #000482;
+  font-weight: 400;
+  margin-bottom: 10px;
+  margin-top: 1px;
+  line-height: 20px;
+}
+.catchMeRaiseTicketContainer .inputGroup {
+  position: relative;
+  margin-bottom: 6px;
+}
+.catchMeRaiseTicketContainer .label {
+  font-size: 14px;
+  color: #555;
+  /* text-transform: capitalize; */
+  display: block;
+  margin-bottom: 5px;
+  text-align: left;
+  padding: 0px;
+  font-weight: 500;
+}
+
+.catchMeRaiseTicketContainer .input {
+  width: 100%;
+  display: inline-block;
+  line-height: 26px;
+  background: #fafafa;
+  -webkit-box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  -moz-box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #666;
+  -webkit-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  border: 1px solid #ccc;
+}
+
+.catchMeRaiseTicketContainer input:focus,
+.catchMeRaiseTicketContainer textarea:focus,
+.catchMeRaiseTicketContainer select:focus {
+  outline: none;
+}
+
+.catchMeRaiseTicketContainer .catchMeSelect {
+  width: 50%;
+  height: 30px;
+  display: inline-block;
+  line-height: 26px;
+  background: #fafafa;
+  -webkit-box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  -moz-box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0 1px 3px 0 rgba(0, 0, 0, 0.08);
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #666;
+  -webkit-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  border: 1px solid #ccc;
+  margin-top: -5px;
+}
+.catchMeRaiseTicketContainer .catchMeRequestSubmit {
+  float: right;
+  background: #4272d7;
+  line-height: 30px;
+  padding: 0 14px;
+  -webkit-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  outline: none;
+  /* background: 0 0; */
+  border: none;
+  margin-top: 10px;
+}
+.catchMeRaiseTicketContainer .catchMeRequestSubmit:hover {
+  background: #3868cd;
+}
+
+.catchMeRaiseTicketContainer .catchMeRequestCancel {
+  float: right;
+  background: #ffffff;
+  line-height: 30px;
+  padding: 0 14px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #ff7373;
+  outline: none;
+  /* background: 0 0; */
+  border: none;
+  margin-top: 10px;
+}
+
+.hide {
+  display: none !important;
+}
+.show {
+  display: block !important;
+}

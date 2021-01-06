@@ -59,6 +59,37 @@ router.post('/externalStorage', uploadtoMemory.single("file"), (req, res, next) 
   })
 })
 
+router.get('/', (req, res) => {
+  let apiKey = req.headers['x-api-key'];
+  if(!apiKey){
+    res.status(400).json({ status: httpStatus.failure, 'Message': 'Api Key is missing from headers' });
+    return;
+  }
+  Account.findOne({ where: { apikey: apiKey } }).then(account => {
+    if(account){
+      Ticket.findAll({
+        where: {
+          accountId: account.id,
+          status: 'ACTIVE'
+        }
+      }).then(tickets => {
+        _.forEach(tickets, ticket => {
+          delete ticket["dataValues"].accountId;
+          delete ticket["dataValues"].status;
+          delete ticket["dataValues"].createdAt;
+          delete ticket["dataValues"].updatedAt;
+        })
+        res.status(200).json({ status: httpStatus.success, tickets: tickets });
+      }).catch(error => {
+        console.log('error while creating  ticket', error);
+        res.status(500).json({ status: httpStatus.failure, message: 'Error while creating ticket', error: error.message })
+      });
+    } else {
+      res.status(400).json({ status: httpStatus.failure, 'Message': 'In Valid Api Key, No information found in our records' });
+    }
+  })
+})
+
 function createTicket(req, res) {
   console.log(req.file.buffer);
   var bodyData = {

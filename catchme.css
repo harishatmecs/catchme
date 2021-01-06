@@ -2,7 +2,7 @@
   position: fixed;
   background: #eee;
   margin: 0px auto;
-  cursor: crosshair;
+  cursor: text;
   max-height: calc(100vh - 5px);
   overflow: auto;
   border: 3px solid #ff7373;
@@ -44,21 +44,96 @@
   z-index: 9;
   top: 3px;
   left: 3px;
-  width: 606px;
+  width: 99.5%;
   height: auto;
-  border: 1px solid #ff7373;
+  /* border: 1px solid #ff7373;
   border-top: none;
   border-left: 0px;
-  border-left: 0px;
-  background: #ffffff;
-  padding: 6px;
+  border-left: 0px; */
+  /* background: #ffffff; */
+  padding: 0px;
   padding-bottom: 0px;
   cursor: auto;
+}
+
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems {
+  width: 100%;
+  text-align: center;
+  padding: 0px;
+  margin: 0px;
+}
+
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems li {
+  list-style: none;
+  display: inline-block;
+  padding: 0px;
+  border: 1px solid#343a4033;
+  border-right: 0px;
+  margin: 5px 0;
+  background: #fff;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems li:hover {
+  background: #e9ecef;
+}
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems li i {
+  font-size: 1.5em;
+  /* width: 24px; */
+  /* height: 24px; */
+  margin: 0.3em 0.6em;
+}
+
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems li:last-child {
+  border-right: 1px solid #343a4033;
+}
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems li.active {
+  background: #2b8aff;
+}
+.catchMeScreenContainer .catchMeToolbar .catchMeToolbarItems li.active i {
+  color: #ffffff;
+}
+.catchMePointerColor {
+  outline: none;
+  width: 25px;
+  height: 24px;
+  padding: 0px;
+  margin: 0px;
+  border: none;
+  cursor: text;
+  /* background: #ff0000; */
+  border-radius: 0px;
+  box-shadow: none;
+  transition: none;
+  margin: 5px 6px 5px 6px;
+  cursor: pointer;
+}
+input[type="color"] {
+  -webkit-appearance: none;
+  border: none;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+.catchMeRequestForm {
+  font-size: 16px;
+  line-height: 24px;
+  color: #fff;
+  font-style: normal;
+  text-decoration: non;
+  cursor: pointer;
+}
+.catchMeRequestForm:hover {
+  color: #ccc;
 }
 
 .catchMeScreenContainer .catchMeToolbar .inputGroup {
   position: relative;
   margin-bottom: 6px;
+  display: none;
 }
 
 .catchMeScreenContainer .catchMeToolbar .inputGroup .catchMeSelect {
@@ -98,7 +173,7 @@
   outline: none;
 }
 
-.catchMeScreenContainer .catchMeToolbar ul {
+/* .catchMeScreenContainer .catchMeToolbar ul {
   position: relative;
   padding: 0;
   list-style: none;
@@ -107,7 +182,7 @@
 }
 .catchMeScreenContainer .catchMeToolbar ul li {
   height: 25px;
-}
+} */
 .catchMeInputContainer {
   cursor: text;
   padding: 12px 15px 5px;
@@ -137,6 +212,7 @@
   padding: 10px;
   min-height: auto;
 }
+
 /* 1. Pointer shape marker */
 .cathMeCircle {
   cursor: context-menu;
@@ -226,6 +302,38 @@
   outline: none;
 }
 
+/* 4. Text holder */
+.cathMeTextHolder {
+  cursor: auto;
+  font-size: 14px;
+  text-shadow: 1px 1px 2px #fff, 0 0 25px #fff, 0 0 5px #ccc;
+  transition: background-color 0.2s ease 0s, border-color 0.2s ease 0s;
+  position: absolute;
+}
+.catchMeTextContainer {
+  cursor: text;
+  margin-bottom: 0px;
+  margin-left: 1px;
+  margin-top: -8px;
+  outline: none;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-block;
+  width: auto;
+  vertical-align: top;
+}
+.catchMeTextContainer:hover {
+  cursor: move;
+}
+.cathMeTextHolder .highlightText {
+  background-color: #bbddff;
+  cursor: auto;
+  /* background-image: linear-gradient(to right, #6aadff 0%, #e9ecef 100%); */
+}
+.cathMeTextHolder .selectText {
+  border: 1px solid #bdbdbd;
+  cursor: move;
+}
 .catchMeRaiseTicketContainer {
   width: 266px;
   height: 250px;

@@ -17,14 +17,22 @@ router.post('/localStorage', uploadtoDisk.single("file"), (req, res, next) => {
     res.status(400).json({ status: httpStatus.failure, 'Message': 'Api Key is missing from headers' });
     return;
   }
-  let integrationType = req.query.integrationType;
+  let image = req.body.image.split(';base64,')[1];
+  let imageBuffer = Buffer.from(image, 'base64');
+  let imageName = req.body.imageName;
+  fs.writeFile('./uploads/' + imageName, imageBuffer, (err) => {
+    if (err) {
+      res.status(500).json({ status: httpStatus.failure, message: 'Error while storing image'})
+      return;
+    }
+  })
   Account.findOne({ where: { apikey: apiKey } }).then(account => {
     if(account){
       let jsonObj = {
         title: req.body.title,
         description: req.body.description,
         priority: req.body.priority,
-        image: 'uploads/' + req.file.originalname,
+        image: 'uploads/' + imageName,
         accountId: account.id
       }
       Ticket.create(jsonObj).then(ticket => {
@@ -49,10 +57,12 @@ router.post('/externalStorage', uploadtoMemory.single("file"), (req, res, next) 
     res.status(400).json({ status: httpStatus.failure, 'Message': 'Api Key is missing from headers' });
     return;
   }
-  let integrationType = req.query.integrationType;
+  let image = req.body.image.split(';base64,')[1];
+  let imageBuffer = Buffer.from(image, 'base64');
+  let imageName = req.body.imageName;
   Account.findOne({ where: { apikey: apiKey } }).then(account => {
     if(account){
-      createTicket(req, res)
+      createTicket(req, res, imageName, imageBuffer )
     } else {
       res.status(400).json({ status: httpStatus.failure, 'Message': 'In Valid Api Key, No information found in our records' });
     }
@@ -90,8 +100,7 @@ router.get('/', (req, res) => {
   })
 })
 
-function createTicket(req, res) {
-  console.log(req.file.buffer);
+function createTicket(req, res, imageName, imageBuffer) {
   var bodyData = {
     "update": {},
     "fields": {
@@ -135,12 +144,12 @@ function createTicket(req, res) {
     } else if (JSON.parse(body).errors) {
         res.status(500).json({ status: httpStatus.failure, result: 'unable to create Ticket', error: JSON.parse(body).errors });
     } else {
-      if(req.file){
+      if(imageBuffer){
         let formData = {
           file: {
-            value: req.file.buffer,
+            value: imageBuffer,
             options: {
-              filename: req.file.originalname,
+              filename: imageName,
               'Content-Type': 'multipart/form-data'
             }
           }

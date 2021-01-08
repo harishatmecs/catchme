@@ -48,7 +48,10 @@ router.post('/localStorage', uploadtoDisk.single("file"), (req, res, next) => {
     } else {
       res.status(400).json({ status: httpStatus.failure, 'Message': 'In Valid Api Key, No information found in our records' });
     }
-  })
+  }).catch(error => {
+    console.log('error while finding account', error);
+    res.status(500).json({ status: httpStatus.failure, message: 'Error while getting account details', error: error.message })
+  });
 })
 
 router.post('/externalStorage', uploadtoMemory.single("file"), (req, res, next) => {
@@ -66,7 +69,10 @@ router.post('/externalStorage', uploadtoMemory.single("file"), (req, res, next) 
     } else {
       res.status(400).json({ status: httpStatus.failure, 'Message': 'In Valid Api Key, No information found in our records' });
     }
-  })
+  }).catch(error => {
+    console.log('error while finding account', error);
+    res.status(500).json({ status: httpStatus.failure, message: 'Error while getting account details', error: error.message })
+  });
 })
 
 router.get('/', (req, res) => {
@@ -91,13 +97,16 @@ router.get('/', (req, res) => {
         })
         res.status(200).json({ status: httpStatus.success, tickets: tickets });
       }).catch(error => {
-        console.log('error while creating  ticket', error);
-        res.status(500).json({ status: httpStatus.failure, message: 'Error while creating ticket', error: error.message })
+        console.log('error while getting tickets', error);
+        res.status(500).json({ status: httpStatus.failure, message: 'Error while getting tickets', error: error.message })
       });
     } else {
-      res.status(400).json({ status: httpStatus.failure, 'Message': 'In Valid Api Key, No information found in our records' });
+      res.status(400).json({ status: httpStatus.failure, message: 'In Valid Api Key, No information found in our records' });
     }
-  })
+  }).catch(error => {
+    console.log('error while finding account', error);
+    res.status(500).json({ status: httpStatus.failure, message: 'Error while getting account details', error: error.message })
+  });
 })
 
 function createTicket(req, res, imageName, imageBuffer) {

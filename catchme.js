@@ -1,5 +1,5 @@
 var ramdomArrayIds=[];
-var ramdomDrawCustomArrayIds=[];
+var ramdomDrawPenArrayIds=[];
 var mousePressed = false;
 var lastX = null, lastY= null;
 var countCanvasClicks = 1;
@@ -48,7 +48,7 @@ function loadHTML(){
     modalHTML+="<li class='catchToolbarItem' id='Pointer' title='Pointer'><i class='fa fa-circle'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Line' title='Line'><i class='fa fa-ellipsis-h'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Color' title='Color'><input type='color' class='catchMePointerColor' value='#ff0000' /></li>";
-    modalHTML+="<li class='catchToolbarItem' id='Undo' class='undoCatchMePoints' title='Undo'><i class='fa fa-undo'></i></li>"; 
+    modalHTML+="<li class='catchToolbarItem' id='Undo' title='Undo'><i class='fa fa-undo'></i></li>"; 
     modalHTML+="<li class='catchToolbarItem' id='Submit' title='Submit the Ticket' style='padding:1px 0.8em;background: #337ab7;'><i><a class='catchMeRequestForm'>Submit</a></i></li>";
     modalHTML+="</ul>"; 
 
@@ -100,7 +100,7 @@ function generateUniqId() {
   return result;
 }
 function dragCatchMeElement(elmnt) {
-  console.log('ddddddddd')
+  //console.log('dragCatchMeElement')
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   if (document.getElementById(elmnt.id)) {
     /* if present, the header is where you move the DIV from:*/
@@ -159,11 +159,9 @@ function generateTextareaWithButton(randomId, userSelectMarkertype){
   if(userSelectMarkertype=="Pointer"){ 
     inputPointerArea.setAttribute("style", "border-color:"+userSelectMarkerColor+"");
     inputPointerArea.className = "catchMeInputContainer";  // textarea class change based on the marker
-  } else if(userSelectMarkertype=="Line"){ 
-     inputPointerArea.className = "catchMeInputContainer absolute";  // textarea class change based on the marker
-  } else if(userSelectMarkertype=="Draw"){  
+  } else if(userSelectMarkertype=="Line" || userSelectMarkertype=="Pen"){  
     //console.log('dddddddd')
-    // drawCatchMeCustomShape($this,randomId,x,y,false); 
+    // drawCatchMePenShape($this,randomId,x,y,false); 
   } else if(userSelectMarkertype=="Text"){ 
     inputPointerArea.className = "catchMeTextContainer highlightText";  // textarea class change based on the marker
     inputPointerArea.innerHTML="Type something"; 
@@ -173,9 +171,10 @@ function generateTextareaWithButton(randomId, userSelectMarkertype){
   
   if(userSelectMarkertype=="Text"){ 
     randomCatchMeMarker.appendChild(inputPointerArea); 
+  } else if(userSelectMarkertype=="Arrow" || userSelectMarkertype=="Line"){  
   } else{
-    randomCatchMeMarker.appendChild(buttonClose);
-    randomCatchMeMarker.appendChild(inputPointerArea); 
+    //randomCatchMeMarker.appendChild(buttonClose);
+    //randomCatchMeMarker.appendChild(inputPointerArea); 
   } 
 }
 function createCatchMePointer(e,randomId,r,o,y,x){
@@ -194,6 +193,27 @@ function createCatchMePointer(e,randomId,r,o,y,x){
         },
         appendTo: e // append to #image_preview!
       }); 
+}
+function createCatchMeArrow(x1,y1, x2,y2,randomId){
+  var userSelectMarkerColor=$('.catchMePointerColor').val(); 
+  var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+  var transform = 'rotate('+angle+'deg)';  
+  var arrowSymbol = $('<div>')
+    .appendTo('.catchMeCapturedScreen')
+    .addClass('catchMeArrow')  
+    .css({
+      'position': 'absolute',
+      '-webkit-transform':  transform,
+      '-moz-transform':     transform,
+      'transform':          transform,
+      'background':userSelectMarkerColor,
+      'height':5,
+    })
+    .width(length)
+    .offset({left: x1, top: y1});  
+    arrowSymbol.attr('id', randomId);
+  return arrowSymbol;
 }
 function createCatchMeStraightLine(x1,y1, x2,y2,randomId){
   var userSelectMarkerColor=$('.catchMePointerColor').val();
@@ -217,7 +237,7 @@ function createCatchMeStraightLine(x1,y1, x2,y2,randomId){
     straightLine.attr('id', randomId);
   return straightLine;
 } 
-function drawCatchMeCustomShape(e,randomId,parentId,x, y, isDown) {
+function drawCatchMePenShape(e,randomId,parentId,x, y, isDown) {
   var randomId=generateUniqId();
   var userSelectMarkerColor=$('.catchMePointerColor').val();
   var userSelectMarkerWidth=$('.catchMePointerWidth').val(); 
@@ -281,12 +301,23 @@ $(document).ready(function () {
         countCanvasClicks=2;
       }
       previousTabItemId=activeToolId;
+    } else if(activeToolId=="Undo"){ 
+      if(ramdomArrayIds.length>0){
+        var getRecentId=ramdomArrayIds[ramdomArrayIds.length-1];
+        ramdomArrayIds = ramdomArrayIds.filter(e => e !== getRecentId); 
+        $("#"+getRecentId).remove();  
+        $("."+getRecentId).remove(); 
+      }
     }
   });
-  // Delete Text component
-  $(document).on('keyup','.catchMeTextContainer',function(e){ 
+  // Delete Text component 
+  $(document).on('keyup','.catchMeArrow, .catchMeTextContainer,cathMeCircle',function(e){ 
+    console.log(e.keyCode)
     if(e.keyCode == 46) {
       var textinputId =  $(this).attr("data-id"); 
+      if (typeof textinputId === typeof undefined && textinputId === false) {
+        textinputId =  $(this).attr("id");
+      }  
       $("#"+textinputId).remove(); 
     }
   });
@@ -297,20 +328,7 @@ $(document).ready(function () {
   });
   $(document).on('click','.catchMeCloseMainContainer',function(e){   
     toggleCatchMeContainer('hide','catchMeScreenContainer');
-  }); 
-  $(document).on('click','.undoCatchMePoints',function(e){  
-     if(ramdomArrayIds.length>0){
-       var getRecentId=ramdomArrayIds[ramdomArrayIds.length-1];
-       ramdomArrayIds = ramdomArrayIds.filter(e => e !== getRecentId);
-        // var indexOfElement = ramdomArrayIds.indexOf(getRecentId); 
-        // if (indexOfElement !== -1) {
-        //   ramdomArrayIds.splice(indexOfElement, 1);
-        // } 
-       // console.log('===',getRecentId)
-       $("#"+getRecentId).remove();  
-       $("."+getRecentId).remove(); 
-     }
-  }); 
+  });  
   // create raise ticket form
   $(document).on('click','.catchMeRequestForm',function(e){  
     toggleCatchMeContainer('show','catchMeRaiseTicketContainer');
@@ -372,18 +390,35 @@ $(document).ready(function () {
     var screenCaptureObj = $(".catchMeCapturedScreen").get(0);
     html2canvas(screenCaptureObj).then(function (canvas) {  
       var canvasWidth = canvas.width; 
-      var canvasHeight = canvas.height; 
-      // Generate Image
-      var img = Canvas2Image.convertToImage(
-        canvas,
-        canvasWidth,
-        canvasHeight
-      );
-
-      
+      var canvasHeight = canvas.height;  
+      var dataURL = canvas.toDataURL("image/png", 1.0);
       // here ajax call required
-
-      $(".catchMeCapturedScreen").html(img);
+      var imageRandomName= generateUniqId()+".png";
+      let formData = new FormData();
+      formData.append('image', dataURL);
+      formData.append('imageName',imageRandomName); 
+      formData.append('title', ticketTitle);
+      formData.append('description',ticketDesc);
+      formData.append('priority',ticketPriority);             
+      fetch('http://localhost:8081/api/tickets/localStorage', {
+        method: 'post',
+        body: formData,
+        headers: new Headers({
+          'x-api-key': '123456789',
+        }),
+      }) 
+        .then(data => { 
+          if (data.status==200){
+            toggleCatchMeContainer('hide','catchMeScreenContainer');
+            alert("JIRA ticket created successfully!");
+          } else {
+            alert("Try again!");
+          }           
+        })
+        .catch(error => {
+          console.log(error);
+        }); 
+      //$(".catchMeCapturedScreen").html(img);
     });
   }); 
   // Creating the round shape pointer
@@ -391,8 +426,8 @@ $(document).ready(function () {
     var clickableAreaClassName = $(ev.target).attr('class');  
     var userSelectedRandomId = $(ev.target).attr("data-id");
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id'); 
-    console.log('Click clickableAreaClassName',clickableAreaClassName)
-    
+    console.log('Canvas Area onclick',clickableAreaClassName) 
+
     // 1. Text
     if(clickableAreaClassName.indexOf("catchMeTextContainer")!=-1){ 
       $('.catchMeTextContainer').removeClass("selectText").removeClass("highlightText");
@@ -431,17 +466,24 @@ $(document).ready(function () {
         //1. Pointer creation
         if(userSelectMarkertype=="Pointer"){ 
           createCatchMePointer($this,randomId,r,o,y,x);
-        } else if(userSelectMarkertype=="Line"){ 
+        } else if(userSelectMarkertype=="Arrow"){ 
           // 2. Straight line creation 
+          if (lastX == null){
+            lastX = pageX; lastY = pageY;
+          } else {
+            createCatchMeArrow(lastX,lastY,pageX,pageY, randomId);
+            lastX = lastY = null;
+          } 
+        } else if(userSelectMarkertype=="Line"){ 
+          // Straight line creation 
           if (lastX == null){
             lastX = pageX; lastY = pageY;
           } else {
             createCatchMeStraightLine(lastX,lastY,pageX,pageY, randomId);
             lastX = lastY = null;
           } 
-        } else if(userSelectMarkertype=="Draw"){  
-          console.log('dddddddd')
-        // drawCatchMeCustomShape($this,randomId,x,y,false); 
+        } else if(userSelectMarkertype=="Pen"){  
+        // drawCatchMePenShape($this,randomId,x,y,false); 
         } else if(userSelectMarkertype=="Text"){ 
           //isTextFocused=true;
           createCatchMeText($this,randomId,r,o,y,x);
@@ -457,48 +499,51 @@ $(document).ready(function () {
         ramdomArrayIds = ramdomArrayIds.filter(e => e !== pointerId); 
         $("#"+pointerId).remove();  
       } 
+    } else if(clickableAreaClassName.indexOf("catchMeArrow")!=-1){  
+      //return;
     } else if(clickableAreaClassName!='catchMeCanvasImage'){
       // avoid pointer to generate textarea and another pointer
      // return;
-    } 
+    }
     activeRandomId==userSelectedRandomId
   }); 
   $(document).on('mousedown','.catchMeCapturedScreen',function(e){
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
     //var userSelectMarkertype=$('.catchMePointerType').val();
-    if(userSelectMarkertype=="Draw"){
-      ramdomDrawCustomArrayIds=[];
+    if(userSelectMarkertype=="Pen"){
+      ramdomDrawPenArrayIds=[];
       var randomId=generateUniqId(); 
       ramdomArrayIds.push(randomId);  
-      ramdomDrawCustomArrayIds.push(randomId);
+      ramdomDrawPenArrayIds.push(randomId);
       mousePressed = true; 
       var $this = $(this),
           r = parseInt(16, 10), 
           o = $this.offset(),
           y = e.pageY - o.top,
           x = e.pageX - o.left;
-          drawCatchMeCustomShape($this,randomId,randomId, x, y, false);
-    }
+          drawCatchMePenShape($this,randomId,randomId, x, y, false);
+    } 
+  });
+  $(document).on('mouseup','.catchMeCapturedScreen',function(e){ 
+      mousePressed = false; 
   });
   $(document).on('mousemove','.catchMeCapturedScreen',function(e){
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
     //var userSelectMarkertype=$('.catchMePointerType').val();
-    if(userSelectMarkertype=="Draw"){ 
+    if(userSelectMarkertype=="Pen"){ 
       var randomId=generateUniqId();
-      var clsUniqeId = ramdomDrawCustomArrayIds.length>0 ? ramdomDrawCustomArrayIds[ramdomDrawCustomArrayIds.length-1] : randomId;
+      var clsUniqeId = ramdomDrawPenArrayIds.length>0 ? ramdomDrawPenArrayIds[ramdomDrawPenArrayIds.length-1] : randomId;
       if (mousePressed) {  
         var $this = $(this),
         r = parseInt(16, 10), 
         o = $this.offset(),
         y = e.pageY - o.top,
         x = e.pageX - o.left;
-        drawCatchMeCustomShape($this,randomId,clsUniqeId, x, y, true);
+        drawCatchMePenShape($this,randomId,clsUniqeId, x, y, true);
       }
-    }
+    } 
   });
-  $(document).on('mouseup','.catchMeCapturedScreen',function(e){ 
-      mousePressed = false; 
-  });
+  
   $(document).on('mouseleave','.catchMeCapturedScreen',function(e){  
       mousePressed = false; 
   });

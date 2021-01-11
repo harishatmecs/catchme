@@ -34,7 +34,7 @@
                         displayHTML+="<tr><td><a href='http://localhost:8081/" + ticketsObj[i].image + "' target='_blank'><img class='img-thumbnail' style='width: 200px; height: 200px;' src='http://localhost:8081/" + ticketsObj[i].image + "'  /></a></td><td>("+ticketsObj[i].id+") <b>"+ticketsObj[i].title+"</b><br/>"+ticketsObj[i].priority+"<br/>"+ticketsObj[i].description+"</td></tr>";
                     }
                     displayHTML+="</table>";
-                    $('#imageContent').append(displayHTML);
+                    $('#imageContent').html(displayHTML);
                 } 
             }) 
             .catch(error => {
@@ -45,6 +45,6 @@
     </script>  
   </head>
   <body>   
-   <div id='imageContent'></div>     
+   <div id='imageContent'>Loading....</div>     
   </body>  
 </html>

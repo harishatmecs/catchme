@@ -5,6 +5,8 @@ var lastX = null, lastY= null;
 var countCanvasClicks = 1;
 var previousTabItemId="Text";
 var activeRandomId="";
+var elementOfRectangleDiv = null;
+var mousePositionObj = { x: 0,y: 0,startX: 0,startY: 0};
 //=================
 // Common functions
 function loadScript(url, callback){
@@ -40,13 +42,13 @@ function loadHTML(){
     modalHTML+="<div class='catchMeToolbar'>"; 
 
     modalHTML+="<ul class='catchMeToolbarItems'>";
-    modalHTML+="<li class='catchToolbarItem' id='Arrow' title='Arrow'><i class='fa fa-long-arrow-right'></i></li>";
     modalHTML+="<li class='catchToolbarItem active' id='Text' title='Text'><i class='fa fa-font'></i></li>";
-    modalHTML+="<li class='catchToolbarItem' id='Square' title='Square'><i class='fa fa-square-o'></i></li>";
+    modalHTML+="<li class='catchToolbarItem' id='Rectangle' title='Rectangle'><i class='fa fa-square-o'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Circle' title='Circle'><i class='fa fa-circle-o'></i></li>";
-    modalHTML+="<li class='catchToolbarItem' id='Pen' title='Pen'><i class='fa fa-pencil'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Pointer' title='Pointer'><i class='fa fa-circle'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Line' title='Line'><i class='fa fa-ellipsis-h'></i></li>";
+    modalHTML+="<li class='catchToolbarItem' id='Arrow' title='Arrow'><i class='fa fa-long-arrow-right'></i></li>";
+    modalHTML+="<li class='catchToolbarItem' id='Pen' title='Pen'><i class='fa fa-pencil'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Color' title='Color'><input type='color' class='catchMePointerColor' value='#ff0000' /></li>";
     modalHTML+="<li class='catchToolbarItem' id='Undo' title='Undo'><i class='fa fa-undo'></i></li>"; 
     modalHTML+="<li class='catchToolbarItem' id='Submit' title='Submit the Ticket' style='padding:1px 0.8em;background: #337ab7;'><i><a class='catchMeRequestForm'>Submit</a></i></li>";
@@ -83,6 +85,25 @@ function loadHTML(){
     modalHTML+="</div>"; 
     $("body").append(modalHTML); 
 } 
+function generateUniqId() {
+  var result = '';
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  var charactersLength = characters.length;
+  for ( var i = 0; i < 5; i++ ) {
+     result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
+function setMousePosition(e) {
+  var ev = e || window.event; //Moz || IE 
+  if (ev.pageX) { //Moz
+    mousePositionObj.x = ev.pageX + window.pageXOffset;
+    mousePositionObj.y = ev.pageY + window.pageYOffset;
+  } else if (ev.clientX) { //IE
+    mousePositionObj.x = ev.clientX + document.body.scrollLeft;
+    mousePositionObj.y = ev.clientY + document.body.scrollTop;
+  } 
+};
 function toggleCatchMeContainer(toggleType, containerName){ 
     if (toggleType === "show") {
         $("."+containerName).removeClass("hide").addClass("show"); 
@@ -90,96 +111,60 @@ function toggleCatchMeContainer(toggleType, containerName){
         $("."+containerName).removeClass("show").addClass("hide");  
     }
 }
-function generateUniqId() {
-  var result           = '';
-  var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  var charactersLength = characters.length;
-  for ( var i = 0; i < 5; i++ ) {
-     result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+// Creating Marker Pointers
+function createCatchMeText(e,randomId,r,o,y,x){
+  var userSelectMarkerColor=$('.catchMePointerColor').val(); 
+  $("<div />", {
+        "class": "cathMeTextHolder",
+        "id":randomId,
+        css: {
+          top: y,
+          left: x, 
+          color:userSelectMarkerColor 
+        },
+        appendTo: e 
+      }); 
 }
-function dragCatchMeElement(elmnt) {
-  //console.log('dragCatchMeElement')
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  if (document.getElementById(elmnt.id)) {
-    /* if present, the header is where you move the DIV from:*/
-    document.getElementById(elmnt.id).onmousedown = dragMouseDown;
-  } else {
-    /* otherwise, move the DIV from anywhere inside the DIV:*/
-    elmnt.onmousedown = dragMouseDown;
-  }
-
-  function dragMouseDown(e) {
-    e = e || window.event;
-    e.preventDefault(); 
-    // get the mouse cursor position at startup:
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    document.onmouseup = closeDragElement;
-    // call a function whenever the cursor moves:
-    document.onmousemove = elementDrag;
-  }
-
-  function elementDrag(e) {
-    e = e || window.event;
-    e.preventDefault(); 
-    // calculate the new cursor position:
-    pos1 = pos3 - e.clientX;
-    pos2 = pos4 - e.clientY;
-    pos3 = e.clientX;
-    pos4 = e.clientY;
-    // set the element's new position:
-    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
-    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
-  }
-
-  function closeDragElement() { 
-    /* stop moving when mouse button is released:*/
-    document.onmouseup = null;
-    document.onmousemove = null;  
-    return false;
-  }
-} 
-function generateTextareaWithButton(randomId, userSelectMarkertype){ 
+//Arrow,Rectangle,Circle, Line
+function createCatchMeShapes($this,randomId,userSelectMarkertype,x,y){
   var userSelectMarkerColor=$('.catchMePointerColor').val();
-  var randomCatchMeMarker = document.getElementById(randomId);
-  // 1. remove button
-  var buttonClose = document.createElement("a"); 
-  buttonClose.className = "catchMeRemovePointer";
-  buttonClose.setAttribute('data-id' , randomId);
+  var markerClass = "catMeRectangle";
+  if(userSelectMarkertype=="Circle"){
+    markerClass = "catchMeCircle";
+  } else if(userSelectMarkertype=="Line"){
+    markerClass = "catchMeStraightLine";
+  } else if(userSelectMarkertype=="Arrow"){
+    markerClass = "catchMeArrow";
+  }
 
-  // 2. textarea 
-  var inputPointerArea = document.createElement("div"); 
-  inputPointerArea.setAttribute('data-id' , randomId);
-  inputPointerArea.setAttribute('contenteditable', 'true');  
-  
-  //======================================= 
-  //Pointer creation
-  if(userSelectMarkertype=="Pointer"){ 
-    inputPointerArea.setAttribute("style", "border-color:"+userSelectMarkerColor+"");
-    inputPointerArea.className = "catchMeInputContainer";  // textarea class change based on the marker
-  } else if(userSelectMarkertype=="Line" || userSelectMarkertype=="Pen"){  
-    //console.log('dddddddd')
-    // drawCatchMePenShape($this,randomId,x,y,false); 
-  } else if(userSelectMarkertype=="Text"){ 
-    inputPointerArea.className = "catchMeTextContainer highlightText";  // textarea class change based on the marker
-    inputPointerArea.innerHTML="Type something"; 
-  } 
-  //======================================= 
- 
-  
-  if(userSelectMarkertype=="Text"){ 
-    randomCatchMeMarker.appendChild(inputPointerArea); 
-  } else if(userSelectMarkertype=="Arrow" || userSelectMarkertype=="Line"){  
-  } else{
-    //randomCatchMeMarker.appendChild(buttonClose);
-    //randomCatchMeMarker.appendChild(inputPointerArea); 
-  } 
+  mousePositionObj.startX = x;
+  mousePositionObj.startY = y;           
+  // Create div temp element for rectangle
+  elementOfRectangleDiv = document.createElement('div');
+  elementOfRectangleDiv.className = markerClass;
+  elementOfRectangleDiv.setAttribute('id' , randomId);
+  elementOfRectangleDiv.style.left = x + 'px';
+  elementOfRectangleDiv.style.top = y + 'px';
+  elementOfRectangleDiv.style.cursoe = "crosshair"; 
+  elementOfRectangleDiv.style.borderColor = userSelectMarkerColor;
+  elementOfRectangleDiv.style.borderWidth = 3; 
+  // Same attributes append to captured screen
+    $("<div />", {
+      "class": markerClass,
+      "id":randomId,
+      css: { 
+        top:y + 'px',
+        left: x + 'px',
+        cursor: "crosshair",
+        borderColor:userSelectMarkerColor,
+        borderWidth:3,
+        '--catchMe-color':userSelectMarkerColor,
+      },
+      appendTo: $this 
+    });
 }
 function createCatchMePointer(e,randomId,r,o,y,x){
-  var userSelectMarkerColor=$('.catchMePointerColor').val();
-  //var userSelectMarkerWidth=$('.catchMePointerWidth').val();
+  var userSelectMarkerColor=$('.catchMePointerColor').val(); 
   $("<div />", {
         "class": "cathMeCircle",
         "id":randomId,
@@ -191,9 +176,10 @@ function createCatchMePointer(e,randomId,r,o,y,x){
           borderColor:userSelectMarkerColor,
           borderWidth:3
         },
-        appendTo: e // append to #image_preview!
+        appendTo: e 
       }); 
-}
+} 
+// Duplicate: Another way to create the arrow start point to end point
 function createCatchMeArrow(x1,y1, x2,y2,randomId){
   var userSelectMarkerColor=$('.catchMePointerColor').val(); 
   var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
@@ -215,28 +201,7 @@ function createCatchMeArrow(x1,y1, x2,y2,randomId){
     arrowSymbol.attr('id', randomId);
   return arrowSymbol;
 }
-function createCatchMeStraightLine(x1,y1, x2,y2,randomId){
-  var userSelectMarkerColor=$('.catchMePointerColor').val();
-  var userSelectMarkerWidth=$('.catchMePointerWidth').val();
-  var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
-  var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-  var transform = 'rotate('+angle+'deg)';  
-  var straightLine = $('<div>')
-    .appendTo('.catchMeCapturedScreen')
-    .addClass('catchMeStraightLine')  
-    .css({
-      'position': 'absolute',
-      '-webkit-transform':  transform,
-      '-moz-transform':     transform,
-      'transform':          transform,
-      'background':userSelectMarkerColor,
-      'height':userSelectMarkerWidth,
-    })
-    .width(length)
-    .offset({left: x1, top: y1});  
-    straightLine.attr('id', randomId);
-  return straightLine;
-} 
+ 
 function drawCatchMePenShape(e,randomId,parentId,x, y, isDown) {
   var randomId=generateUniqId();
   var userSelectMarkerColor=$('.catchMePointerColor').val();
@@ -257,22 +222,10 @@ function drawCatchMePenShape(e,randomId,parentId,x, y, isDown) {
   }); 
   lastX = x; lastY = y; 
 }
-function createCatchMeText(e,randomId,r,o,y,x){
-  var userSelectMarkerColor=$('.catchMePointerColor').val(); 
-  $("<div />", {
-        "class": "cathMeTextHolder",
-        "id":randomId,
-        css: {
-          top: y,
-          left: x,
-          // width: r * 2,
-          // height: r * 2, 
-          color:userSelectMarkerColor 
-        },
-        appendTo: e // append to #image_preview!
-      }); 
-}
 
+
+
+ 
 
 //==================================================
 // Generate radius pointers and display round symbol
@@ -280,10 +233,10 @@ var AppRoundRadiusValues = AppRoundRadiusValues || {};
 AppRoundRadiusValues.points = [];  
 $(document).ready(function () {    
   addStyleSheet('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');  
-  addStyleSheet('catchme.css');
+  addStyleSheet('css/capture/catchme.css');
   //loadScript("jquery.min.js", function(){});
-  loadScript("html2canvas.min.js", function(){});
-  loadScript("canvas2image.js", function(){});
+  loadScript("js/capture/html2canvas.min.js", function(){});
+  loadScript("js/capture/canvas2image.js", function(){});
   loadHTML(); 
   toggleCatchMeContainer('hide','catchMeScreenContainer');
   // Toolbar active
@@ -320,12 +273,7 @@ $(document).ready(function () {
       }  
       $("#"+textinputId).remove(); 
     }
-  });
-  // Clear all points
-  $(document).on('click','.clearAllPointers',function(e){ 
-    e.preventdefault();  
-    AppRoundRadiusValues.points.push({});
-  });
+  }); 
   $(document).on('click','.catchMeCloseMainContainer',function(e){   
     toggleCatchMeContainer('hide','catchMeScreenContainer');
   });  
@@ -374,9 +322,9 @@ $(document).ready(function () {
     var ticketSeverity = $(".catchMeRequestSeverity").val();
     //console.log('fgh=', ticketTitle+'='+ticketDesc+'='+ticketPriority+'='+ticketSeverity);
     // remove developer options
-    $(".catchMeCloseMainContainer").remove();
-    $(".catchMeToolbar").remove();
-    $(".catchMeRemovePointer").remove();
+    $(".catchMeCloseMainContainer").hide();
+    $(".catchMeToolbar").hide();
+    $(".catchMeRemovePointer").hide();
     $('.catchMeInputContainer').addClass('removeTextArea');
     toggleCatchMeContainer('hide','catchMeRaiseTicketContainer');
     // remove all empty pointers 
@@ -400,95 +348,90 @@ $(document).ready(function () {
       formData.append('title', ticketTitle);
       formData.append('description',ticketDesc);
       formData.append('priority',ticketPriority);             
-      fetch('http://localhost:8081/api/tickets/localStorage', {
-        method: 'post',
-        body: formData,
-        headers: new Headers({
-          'x-api-key': '123456789',
-        }),
-      }) 
-        .then(data => { 
-          if (data.status==200){
-            toggleCatchMeContainer('hide','catchMeScreenContainer');
-            alert("JIRA ticket created successfully!");
-          } else {
-            alert("Try again!");
-          }           
-        })
-        .catch(error => {
-          console.log(error);
-        }); 
-      //$(".catchMeCapturedScreen").html(img);
+      // fetch('http://localhost:8081/api/tickets/localStorage', {
+      //   method: 'post',
+      //   body: formData,
+      //   headers: new Headers({
+      //     'x-api-key': '123456789',
+      //   }),
+      // }) 
+      //   .then(data => { 
+      //     if (data.status==200){
+      //       toggleCatchMeContainer('hide','catchMeScreenContainer');
+      //       alert("JIRA ticket created successfully!");
+      //     } else {
+      //       alert("Try again!");
+      //     }           
+      //   })
+      //   .catch(error => {
+      //     console.log(error);
+      //   }); 
+       $(".catchMeCapturedScreen").html(img);
     });
   }); 
   // Creating the round shape pointer
   $(document).on('click','.catchMeCapturedScreen',function(ev){ 
-    var clickableAreaClassName = $(ev.target).attr('class');  
-    var userSelectedRandomId = $(ev.target).attr("data-id");
-    var userSelectMarkertype=$(".catchToolbarItem.active").attr('id'); 
+    var clickableAreaClassName = $(ev.target).attr('class');  // Selected Area Class name
+    var userSelectedRandomId = $(ev.target).attr("data-id"); // Selected Random Id
+    var userSelectMarkertype=$(".catchToolbarItem.active").attr('id'); // Current Marker Type  
     console.log('Canvas Area onclick',clickableAreaClassName) 
 
-    // 1. Text
+    // Change Text tool classes based on Selection and Highlight
     if(clickableAreaClassName.indexOf("catchMeTextContainer")!=-1){ 
       $('.catchMeTextContainer').removeClass("selectText").removeClass("highlightText");
       $('#'+userSelectedRandomId + ' .catchMeTextContainer').addClass("selectText"); 
-     // dragCatchMeElement(document.getElementById(userSelectedRandomId)); 
       return;
-    }
+    } 
     
-    
-    // avoid to mark inside the textarea
+    // Avoid to other marker
+    // Only marker should generate, when user select captured image
     if(clickableAreaClassName.indexOf("catchMeCanvasImage")!=-1){       
-      // Remove all Text highlights
+      // Remove all marker highlights
       $('.catchMeTextContainer').removeClass("selectText").removeClass("highlightText");
 
       // After click outside of the screen, don't generate any marker. countCanvasClicks helps
       if(userSelectMarkertype=="Text" && activeRandomId!=userSelectedRandomId){
         countCanvasClicks++; 
-      } else {
-        // Other than Text
-        countCanvasClicks=2;
+      } else {        
+        countCanvasClicks=2; // Other than Text Marker
       }
+
       if(countCanvasClicks>1){ 
-        countCanvasClicks=0;
-        // Generate random id
-        var randomId=generateUniqId();
-        ramdomArrayIds.push(randomId); 
-        // Page current position
-        var pageX=ev.pageX;
-        var pageY = ev.pageY;
+        countCanvasClicks=0;        
+        var randomId=generateUniqId();// Generate and Push random id
+        ramdomArrayIds.push(randomId);// Save ramdom id for Undo
+        // Set current mouse position 
+        mousePositionObj.startX = ev.pageX;
+        mousePositionObj.startY = ev.pageY;
+        // Current clicked element position
         const $this = $(this),
           r = parseInt(16, 10), 
           o = $this.offset(),
-          y = pageY - o.top,
-          x = pageX - o.left; 
-        //======================================= 
-        //1. Pointer creation
-        if(userSelectMarkertype=="Pointer"){ 
-          createCatchMePointer($this,randomId,r,o,y,x);
-        } else if(userSelectMarkertype=="Arrow"){ 
-          // 2. Straight line creation 
-          if (lastX == null){
-            lastX = pageX; lastY = pageY;
-          } else {
-            createCatchMeArrow(lastX,lastY,pageX,pageY, randomId);
-            lastX = lastY = null;
-          } 
-        } else if(userSelectMarkertype=="Line"){ 
-          // Straight line creation 
-          if (lastX == null){
-            lastX = pageX; lastY = pageY;
-          } else {
-            createCatchMeStraightLine(lastX,lastY,pageX,pageY, randomId);
-            lastX = lastY = null;
-          } 
-        } else if(userSelectMarkertype=="Pen"){  
-        // drawCatchMePenShape($this,randomId,x,y,false); 
-        } else if(userSelectMarkertype=="Text"){ 
-          //isTextFocused=true;
+          y = mousePositionObj.startY  - o.top,
+          x = mousePositionObj.startX - o.left; 
+        
+        // Displaing Marker Pointers on the Screen
+        // 1. Text tool
+        if(userSelectMarkertype=="Text"){  
           createCatchMeText($this,randomId,r,o,y,x);
+          var randomCatchMeTextMarker = document.getElementById(randomId);
+          var inputPointerArea = document.createElement("div"); 
+          inputPointerArea.setAttribute('data-id' , randomId);
+          inputPointerArea.setAttribute('contenteditable', 'true'); 
+          inputPointerArea.className = "catchMeTextContainer highlightText";  // textarea class change based on the marker
+          inputPointerArea.innerHTML="Type something";  
+          randomCatchMeTextMarker.appendChild(inputPointerArea); 
         } 
-        generateTextareaWithButton(randomId, userSelectMarkertype); 
+        // Arrow,Rectangle,Circle, Line
+        else if(userSelectMarkertype=="Arrow" || userSelectMarkertype=="Rectangle" || userSelectMarkertype=="Circle" || userSelectMarkertype=="Line"){   
+          if (elementOfRectangleDiv !== null) {
+              elementOfRectangleDiv = null; 
+          } else { 
+            createCatchMeShapes($this, randomId, userSelectMarkertype, mousePositionObj.startX,mousePositionObj.startY );              
+          } 
+        } else if(userSelectMarkertype=="Pointer"){ 
+          createCatchMePointer($this,randomId,r,o,y,x);
+        } else if(userSelectMarkertype=="Pen"){ }  
         //AppRoundRadiusValues.points.push({x,y,r}); 
       }
     }
@@ -499,15 +442,94 @@ $(document).ready(function () {
         ramdomArrayIds = ramdomArrayIds.filter(e => e !== pointerId); 
         $("#"+pointerId).remove();  
       } 
-    } else if(clickableAreaClassName.indexOf("catchMeArrow")!=-1){  
-      //return;
+    } else if(clickableAreaClassName.indexOf("catMeRectangle")!=-1){  
+       // close draw rec shapr
+      if (elementOfRectangleDiv !== null) {
+          elementOfRectangleDiv = null; 
+      }      
     } else if(clickableAreaClassName!='catchMeCanvasImage'){
       // avoid pointer to generate textarea and another pointer
      // return;
     }
     activeRandomId==userSelectedRandomId
-  }); 
+  });   
+  $(document).on('mousemove','.catchMeCapturedScreen',function(e){
+    console.log('mousemove')
+    var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
+    //var userSelectMarkertype=$('.catchMePointerType').val();
+    if(userSelectMarkertype=="Pen"){ 
+      var randomId=generateUniqId();
+      var clsUniqeId = ramdomDrawPenArrayIds.length>0 ? ramdomDrawPenArrayIds[ramdomDrawPenArrayIds.length-1] : randomId;
+      if (mousePressed) {  
+        var $this = $(this),
+        r = parseInt(16, 10), 
+        o = $this.offset(),
+        y = e.pageY - o.top,
+        x = e.pageX - o.left;
+        drawCatchMePenShape($this,randomId,clsUniqeId, x, y, true);
+      }
+    } else if(userSelectMarkertype=="Arrow" || userSelectMarkertype=="Rectangle" || userSelectMarkertype=="Circle" || userSelectMarkertype=="Line"){ 
+      setMousePosition(e); 
+      var userSelectMarkerColor=$('.catchMePointerColor').val();
+      if (elementOfRectangleDiv !== null) { 
+        var currentRectangleEleId= elementOfRectangleDiv.id;  
+        var elementWidth=Math.abs(mousePositionObj.x - mousePositionObj.startX) + 'px';
+        var elementHeight=Math.abs(mousePositionObj.y - mousePositionObj.startY) + 'px';
+        var elementLeft = (mousePositionObj.x - mousePositionObj.startX < 0) ? mousePositionObj.x + 'px' : mousePositionObj.startX + 'px';
+        var elementTop=(mousePositionObj.y - mousePositionObj.startY < 0) ? mousePositionObj.y + 'px' : mousePositionObj.startY + 'px';
+  
+        if(userSelectMarkertype=="Line"){ 
+          elementHeight='0px'; 
+          var length = Math.sqrt((mousePositionObj.startX-mousePositionObj.x)*(mousePositionObj.startX-mousePositionObj.x) + (mousePositionObj.startY-mousePositionObj.y)*(mousePositionObj.startY-mousePositionObj.y));
+          var angle  = Math.atan2(mousePositionObj.y - mousePositionObj.startY, mousePositionObj.x -  mousePositionObj.startX) * 180 / Math.PI;
+          var transform = 'rotate('+angle+'deg)'; 
+          $('#'+currentRectangleEleId).css({
+            //'-webkit-transform':  transform,
+           // '-moz-transform':     transform,
+            //'transform':          transform,
+            'background':userSelectMarkerColor, 
+            //'width': elementWidth,
+            'height': elementHeight,
+            'left': (mousePositionObj.x - mousePositionObj.startX < 0) ? mousePositionObj.x + 'px' : mousePositionObj.startX + 'px',
+            //'top': (mousePositionObj.y - mousePositionObj.startY < 0) ? mousePositionObj.y + 'px' : mousePositionObj.startY + 'px', 
+          }) 
+          .width(length)
+          .offset({left: elementLeft, top: elementTop}); 
+        } 
+        else if(userSelectMarkertype=="Arrow"){ 
+          elementHeight='0px'; 
+          var length = Math.sqrt((mousePositionObj.startX-mousePositionObj.x)*(mousePositionObj.startX-mousePositionObj.x) + (mousePositionObj.startY-mousePositionObj.y)*(mousePositionObj.startY-mousePositionObj.y));
+          var angle  = Math.atan2(mousePositionObj.y - mousePositionObj.startY, mousePositionObj.x -  mousePositionObj.startX) * 180 / Math.PI;
+          var transform = 'rotate('+angle+'deg)';  
+          //$("#catchMeRemoveStyle").remove(); 
+         // $('<style id="catchMeRemoveStyle">.catchMeArrow::after{border-left-color: ' + userSelectMarkerColor + ' !important;}</style>').appendTo("head");
+          $('#'+currentRectangleEleId).css({
+            //'-webkit-transform':  transform,
+           // '-moz-transform':     transform,
+            //'transform':          transform,
+            'background':userSelectMarkerColor, 
+            '--catchMe-color':userSelectMarkerColor,
+            //'::after': 'border-left-color :  red',
+            //'width': elementWidth,
+            'height': elementHeight,
+            'left': (mousePositionObj.x - mousePositionObj.startX < 0) ? mousePositionObj.x + 'px' : mousePositionObj.startX + 'px',
+            //'top': (mousePositionObj.y - mousePositionObj.startY < 0) ? mousePositionObj.y + 'px' : mousePositionObj.startY + 'px', 
+          }) 
+          .width(length)
+          .offset({left: elementLeft, top: elementTop}); 
+        }  else {
+          $('#'+currentRectangleEleId).css({
+            'width': elementWidth,
+            'height': elementHeight,
+            'left': elementLeft,
+            'top': elementTop, 
+          }) 
+        } 
+      } 
+    }
+  });
   $(document).on('mousedown','.catchMeCapturedScreen',function(e){
+    console.log('mousedwon')
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
     //var userSelectMarkertype=$('.catchMePointerType').val();
     if(userSelectMarkertype=="Pen"){
@@ -522,28 +544,11 @@ $(document).ready(function () {
           y = e.pageY - o.top,
           x = e.pageX - o.left;
           drawCatchMePenShape($this,randomId,randomId, x, y, false);
-    } 
+    }  
   });
   $(document).on('mouseup','.catchMeCapturedScreen',function(e){ 
       mousePressed = false; 
   });
-  $(document).on('mousemove','.catchMeCapturedScreen',function(e){
-    var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
-    //var userSelectMarkertype=$('.catchMePointerType').val();
-    if(userSelectMarkertype=="Pen"){ 
-      var randomId=generateUniqId();
-      var clsUniqeId = ramdomDrawPenArrayIds.length>0 ? ramdomDrawPenArrayIds[ramdomDrawPenArrayIds.length-1] : randomId;
-      if (mousePressed) {  
-        var $this = $(this),
-        r = parseInt(16, 10), 
-        o = $this.offset(),
-        y = e.pageY - o.top,
-        x = e.pageX - o.left;
-        drawCatchMePenShape($this,randomId,clsUniqeId, x, y, true);
-      }
-    } 
-  });
-  
   $(document).on('mouseleave','.catchMeCapturedScreen',function(e){  
       mousePressed = false; 
   });
@@ -563,6 +568,11 @@ $('body').on('click', function(e) {
       var canvasHeight = canvas.height; 
       //$(".catchMeScreenContainer").html(canvas);  
       toggleCatchMeContainer('show','catchMeScreenContainer');
+      // Add developer options
+      $(".catchMeCloseMainContainer").show();
+      $(".catchMeToolbar").show();
+      $(".catchMeRemovePointer").show();
+      $('.catchMeInputContainer').removeClass('removeTextArea');
       // Generate Image
       var img = Canvas2Image.convertToImage(
         canvas,

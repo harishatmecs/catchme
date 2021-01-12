@@ -10,6 +10,9 @@
   top: 0px;
   width: 100%;
 }
+.catchMeCapturedScreen img {
+  user-select: none;
+}
 .catchMeCanvas {
   width: 100%;
   max-height: calc(100vh - 5px);
@@ -321,6 +324,21 @@ input[type="color"]::-webkit-color-swatch {
   position: absolute;
 }
 
+.catMeRectangle:hover,
+.catchMeCircle:hover,
+.catchMeStraightLine:hover,
+.catchMeArrow:hover,
+.cathMeDot:hover {
+  cursor: move !important;
+}
+.catMeRectangle:active,
+.catchMeCircle:active,
+.catchMeStraightLine:active,
+.catchMeArrow:active,
+.cathMeDot:active {
+  cursor: move !important;
+}
+
 /* 2. Line shape marker */
 .catchMeStraightLine1 {
   -webkit-transform-origin: 0 50%;
@@ -380,6 +398,7 @@ input[type="color"]::-webkit-color-swatch {
   display: inline-block;
   width: auto;
   vertical-align: top;
+  user-select: none;
 }
 .catchMeTextContainer:hover {
   cursor: move;

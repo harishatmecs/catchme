@@ -111,6 +111,17 @@ function toggleCatchMeContainer(toggleType, containerName){
         $("."+containerName).removeClass("show").addClass("hide");  
     }
 }
+function removeCatchMeElement(getRecentId){  
+  console.log(getRecentId)
+  ramdomArrayIds = ramdomArrayIds.filter(e => e !== getRecentId);
+  var attrClass = $("#"+getRecentId).attr('class');
+  if(attrClass.indexOf("cathMeDot")!=-1){ 
+    attrClass=attrClass.replace("cathMeDot ", "");
+    $(".catchMeCapturedScreen ."+attrClass).remove(); 
+  }
+  $(".catchMeCapturedScreen #"+getRecentId).remove();  
+  $(".catchMeCapturedScreen ."+getRecentId).remove();
+}  
 // Creating Marker Pointers
 function createCatchMeText(e,randomId,r,o,y,x){
   var userSelectMarkerColor=$('.catchMePointerColor').val(); 
@@ -239,6 +250,13 @@ $(document).ready(function () {
   loadScript("js/capture/canvas2image.js", function(){});
   loadHTML(); 
   toggleCatchMeContainer('hide','catchMeScreenContainer');
+  // Delete Text component 
+  $(document.body).on('keyup', function(e) {  
+    if (e.key === "Delete" || e.keyCode == 46) { 
+      console.log(activeRandomId)
+      removeCatchMeElement(activeRandomId)
+    } 
+  });
   // Toolbar active
   $(document).on('click','.catchToolbarItem',function(e){ 
     var activeToolId = $(this).attr('id');
@@ -257,23 +275,10 @@ $(document).ready(function () {
     } else if(activeToolId=="Undo"){ 
       if(ramdomArrayIds.length>0){
         var getRecentId=ramdomArrayIds[ramdomArrayIds.length-1];
-        ramdomArrayIds = ramdomArrayIds.filter(e => e !== getRecentId); 
-        $("#"+getRecentId).remove();  
-        $("."+getRecentId).remove(); 
+        removeCatchMeElement(getRecentId); 
       }
     }
-  });
-  // Delete Text component 
-  $(document).on('keyup','.catchMeArrow, .catchMeTextContainer,cathMeCircle',function(e){ 
-    console.log(e.keyCode)
-    if(e.keyCode == 46) {
-      var textinputId =  $(this).attr("data-id"); 
-      if (typeof textinputId === typeof undefined && textinputId === false) {
-        textinputId =  $(this).attr("id");
-      }  
-      $("#"+textinputId).remove(); 
-    }
-  }); 
+  });   
   $(document).on('click','.catchMeCloseMainContainer',function(e){   
     toggleCatchMeContainer('hide','catchMeScreenContainer');
   });  
@@ -348,38 +353,42 @@ $(document).ready(function () {
       formData.append('title', ticketTitle);
       formData.append('description',ticketDesc);
       formData.append('priority',ticketPriority);             
-      // fetch('http://localhost:8081/api/tickets/localStorage', {
-      //   method: 'post',
-      //   body: formData,
-      //   headers: new Headers({
-      //     'x-api-key': '123456789',
-      //   }),
-      // }) 
-      //   .then(data => { 
-      //     if (data.status==200){
-      //       toggleCatchMeContainer('hide','catchMeScreenContainer');
-      //       alert("JIRA ticket created successfully!");
-      //     } else {
-      //       alert("Try again!");
-      //     }           
-      //   })
-      //   .catch(error => {
-      //     console.log(error);
-      //   }); 
-       $(".catchMeCapturedScreen").html(img);
+      fetch('http://localhost:8081/api/tickets/localStorage', {
+        method: 'post',
+        body: formData,
+        headers: new Headers({
+          'x-api-key': '123456789',
+        }),
+      }) 
+        .then(data => { 
+          if (data.status==200){
+            toggleCatchMeContainer('hide','catchMeScreenContainer');
+            alert("JIRA ticket created successfully!");
+          } else {
+            alert("Try again!");
+          }           
+        })
+        .catch(error => {
+          console.log(error);
+        }); 
+       //$(".catchMeCapturedScreen").html(img);
     });
   }); 
   // Creating the round shape pointer
   $(document).on('click','.catchMeCapturedScreen',function(ev){ 
     var clickableAreaClassName = $(ev.target).attr('class');  // Selected Area Class name
-    var userSelectedRandomId = $(ev.target).attr("data-id"); // Selected Random Id
+    var userSelectedRandomId =$(ev.target).attr("id");
+    if (typeof userSelectedRandomId==='undefined'){
+      userSelectedRandomId =$(ev.target).attr("data-id"); 
+    }  
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id'); // Current Marker Type  
     console.log('Canvas Area onclick',clickableAreaClassName) 
 
     // Change Text tool classes based on Selection and Highlight
     if(clickableAreaClassName.indexOf("catchMeTextContainer")!=-1){ 
       $('.catchMeTextContainer').removeClass("selectText").removeClass("highlightText");
-      $('#'+userSelectedRandomId + ' .catchMeTextContainer').addClass("selectText"); 
+      $('#'+userSelectedRandomId + ' .catchMeTextContainer').addClass("selectText");
+      activeRandomId=userSelectedRandomId; 
       return;
     } 
     
@@ -388,7 +397,7 @@ $(document).ready(function () {
     if(clickableAreaClassName.indexOf("catchMeCanvasImage")!=-1){       
       // Remove all marker highlights
       $('.catchMeTextContainer').removeClass("selectText").removeClass("highlightText");
-
+      console.log('count clicks', countCanvasClicks)
       // After click outside of the screen, don't generate any marker. countCanvasClicks helps
       if(userSelectMarkertype=="Text" && activeRandomId!=userSelectedRandomId){
         countCanvasClicks++; 
@@ -442,19 +451,19 @@ $(document).ready(function () {
         ramdomArrayIds = ramdomArrayIds.filter(e => e !== pointerId); 
         $("#"+pointerId).remove();  
       } 
-    } else if(clickableAreaClassName.indexOf("catMeRectangle")!=-1){  
+    } else if(clickableAreaClassName.indexOf("catMeRectangle")!=-1){ 
        // close draw rec shapr
       if (elementOfRectangleDiv !== null) {
           elementOfRectangleDiv = null; 
-      }      
+      }     
     } else if(clickableAreaClassName!='catchMeCanvasImage'){
       // avoid pointer to generate textarea and another pointer
      // return;
     }
-    activeRandomId==userSelectedRandomId
+    activeRandomId=userSelectedRandomId;
   });   
   $(document).on('mousemove','.catchMeCapturedScreen',function(e){
-    console.log('mousemove')
+    //console.log('mousemove')
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
     //var userSelectMarkertype=$('.catchMePointerType').val();
     if(userSelectMarkertype=="Pen"){ 
@@ -529,7 +538,7 @@ $(document).ready(function () {
     }
   });
   $(document).on('mousedown','.catchMeCapturedScreen',function(e){
-    console.log('mousedwon')
+    //console.log('mousedwon')
     var userSelectMarkertype=$(".catchToolbarItem.active").attr('id');
     //var userSelectMarkertype=$('.catchMePointerType').val();
     if(userSelectMarkertype=="Pen"){

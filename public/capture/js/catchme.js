@@ -124,8 +124,9 @@ function removeCatchMeElement(getRecentId){
 }  
 // Creating Marker Pointers
 function createCatchMeText(e,randomId,r,o,y,x){
-  var userSelectMarkerColor=$('.catchMePointerColor').val(); 
-  $("<div />", {
+  var userSelectMarkerColor=$('.catchMePointerColor').val();
+  console.log('userSelectMarkerColor=',userSelectMarkerColor) 
+  var newTextDiv=$("<div />", {
         "class": "cathMeTextHolder",
         "id":randomId,
         css: {
@@ -133,8 +134,9 @@ function createCatchMeText(e,randomId,r,o,y,x){
           left: x, 
           color:userSelectMarkerColor 
         },
-        appendTo: e 
+       // appendTo: e 
       }); 
+    $(".catchMeCapturedScreen").append(newTextDiv); 
 }
 //Arrow,Rectangle,Circle, Line
 function createCatchMeShapes($this,randomId,userSelectMarkertype,x,y){
@@ -160,7 +162,7 @@ function createCatchMeShapes($this,randomId,userSelectMarkertype,x,y){
   elementOfRectangleDiv.style.borderColor = userSelectMarkerColor;
   elementOfRectangleDiv.style.borderWidth = 3; 
   // Same attributes append to captured screen
-    $("<div />", {
+   var newRectangleDivObj= $("<div />", {
       "class": markerClass,
       "id":randomId,
       css: { 
@@ -171,12 +173,13 @@ function createCatchMeShapes($this,randomId,userSelectMarkertype,x,y){
         borderWidth:3,
         '--catchMe-color':userSelectMarkerColor,
       },
-      appendTo: $this 
+      //appendTo: $this 
     });
+    $(".catchMeCapturedScreen").append(newRectangleDivObj); 
 }
 function createCatchMePointer(e,randomId,r,o,y,x){
   var userSelectMarkerColor=$('.catchMePointerColor').val(); 
-  $("<div />", {
+  var newPointerDivObj=$("<div />", {
         "class": "cathMeCircle",
         "id":randomId,
         css: {
@@ -187,8 +190,9 @@ function createCatchMePointer(e,randomId,r,o,y,x){
           borderColor:userSelectMarkerColor,
           borderWidth:3
         },
-        appendTo: e 
-      }); 
+        //appendTo: e 
+  }); 
+  $(".catchMeCapturedScreen").append(newPointerDivObj); 
 } 
 // Duplicate: Another way to create the arrow start point to end point
 function createCatchMeArrow(x1,y1, x2,y2,randomId){
@@ -197,7 +201,7 @@ function createCatchMeArrow(x1,y1, x2,y2,randomId){
   var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
   var transform = 'rotate('+angle+'deg)';  
   var arrowSymbol = $('<div>')
-    .appendTo('.catchMeCapturedScreen')
+   // .appendTo('.catchMeCapturedScreen')
     .addClass('catchMeArrow')  
     .css({
       'position': 'absolute',
@@ -210,6 +214,7 @@ function createCatchMeArrow(x1,y1, x2,y2,randomId){
     .width(length)
     .offset({left: x1, top: y1});  
     arrowSymbol.attr('id', randomId);
+    $(".catchMeCapturedScreen").append(arrowSymbol); 
   return arrowSymbol;
 }
  
@@ -218,7 +223,7 @@ function drawCatchMePenShape(e,randomId,parentId,x, y, isDown) {
   var userSelectMarkerColor=$('.catchMePointerColor').val();
   var userSelectMarkerWidth=$('.catchMePointerWidth').val(); 
   var r = parseInt(16, 10);  
-  $("<div />", {
+  var newPenDivObj = $("<div />", {
     "class": "cathMeDot "+parentId,
     "id":randomId,
     css: {
@@ -229,8 +234,9 @@ function drawCatchMePenShape(e,randomId,parentId,x, y, isDown) {
       borderColor:userSelectMarkerColor,
       borderWidth:userSelectMarkerWidth
     },
-    appendTo: e // append to #image_preview!
-  }); 
+    //appendTo: e // append to #image_preview!
+  });
+  $(".catchMeCapturedScreen").append(newPenDivObj);  
   lastX = x; lastY = y; 
 }
 
@@ -244,10 +250,10 @@ var AppRoundRadiusValues = AppRoundRadiusValues || {};
 AppRoundRadiusValues.points = [];  
 $(document).ready(function () {    
   addStyleSheet('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');  
-  addStyleSheet('css/capture/catchme.css');
-  //loadScript("jquery.min.js", function(){});
-  loadScript("js/capture/html2canvas.min.js", function(){});
-  loadScript("js/capture/canvas2image.js", function(){});
+  addStyleSheet('capture/css/catchme.css');
+ // loadScript("capture/js/jquery.min.js", function(){});
+  loadScript("capture/js/html2canvas.min.js", function(){});
+  loadScript("capture/js/canvas2image.js", function(){});
   loadHTML(); 
   toggleCatchMeContainer('hide','catchMeScreenContainer');
   // Delete Text component 

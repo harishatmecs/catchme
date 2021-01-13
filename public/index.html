@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -25,14 +23,15 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>CatchMe App</title>
-    <link rel="stylesheet" href="capture/css/bootstrap.min.css"/>
-    <script src="capture/js/jquery.min.js"></script> 
+    <link rel="stylesheet" href="capture/css/bootstrap.min.css" />
+    <script src="capture/js/jquery.min.js"></script>
     <script src="capture/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="main.css"/>
-    
-    <script async src="capture/js/catchme.js?key=123456789"></script> 
-  </head>
-  <body>
+    <link rel="stylesheet" href="main.css" />
+
+    <script async src="capture/js/catchme.js?key=123456789"></script>
+</head>
+
+<body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <!--
@@ -45,5 +44,126 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-  </body>
+    <script>
+        function startDictation() {
+
+            if (window.hasOwnProperty('webkitSpeechRecognition')) {
+
+                var recognition = new webkitSpeechRecognition();
+
+
+                //recognition.continuous = false;
+                //recognition.interimResults = false;
+                recognition.continuous = true;
+                recognition.interimResults = true;
+
+                recognition.lang = "en-US";
+                recognition.start();
+                var scrollValue = window.pageYOffset;
+                window.onscroll = function() {
+                    scrollValue = window.pageYOffset
+                };
+
+                recognition.onresult = function(e) {
+                    //  var txtValue = e.results[0][0].transcript.toLowerCase();
+
+                    //recognition.stop();
+                    // document.getElementById('labnol').submit();
+                    // console.log("ssssssssss", txtValue)
+
+
+
+                    var interim_transcript = '';
+                    var final_transcript = '';
+
+                    for (var i = e.resultIndex; i < e.results.length; ++i) {
+                        // Verify if the recognized text is the last with the isFinal property
+                        if (e.results[i].isFinal) {
+                            final_transcript += e.results[i][0].transcript;
+                        } else {
+                            interim_transcript += e.results[i][0].transcript;
+                        }
+                    }
+                    var txtValue = final_transcript.trim().toLowerCase();;
+                    //document.getElementById('transcript').value = txtValue;
+                    if (txtValue === "open services" || txtValue === "open services  page" || txtValue === "go to services") {
+                        document.getElementById('services').click();
+                    }
+                    if (txtValue === "open about" || txtValue === "open about us" || txtValue === "open about us page" || txtValue === "go to about us" || txtValue === "go to about") {
+                        document.getElementById('about').click();
+                    }
+                    if (txtValue === "open contact" || txtValue === "open contact us" || txtValue === "open contact us page" || txtValue === "go to contact us" || txtValue === "go to contact") {
+                        document.getElementById('contact').click();
+                    }
+                    if (txtValue === "open home" || txtValue === "open home  page" || txtValue === "go to homepage") {
+                        document.getElementById('home').click();
+                    }
+
+                    if (txtValue === "scroll down") {
+                        scrollValue = parseInt(scrollValue) + 300
+                        window.scrollTo(0, parseInt(scrollValue));
+                    }
+
+                    if (txtValue === "scroll up") {
+                        scrollValue = parseInt(scrollValue) - 300
+                        window.scrollTo(0, parseInt(scrollValue));
+                    }
+                    if (txtValue === "scroll to bottom" || txtValue === "go to bottom") {
+                        window.scrollTo(0, document.body.scrollHeight);
+                    }
+                    if (txtValue === "scroll to top" || txtValue === "go to top") {
+                        document.body.scrollTop = 0; // For Safari
+                        document.documentElement.scrollTop = 0
+                    }
+
+                    if (txtValue.includes("enter first name")) {
+                        document.getElementById('firstname').value = txtValue.replace("enter first name", "");;
+                    }
+                    if (txtValue.includes("enter last name")) {
+                        document.getElementById('lastname').value = txtValue.replace("enter last name", "");;
+                    }
+                    if (txtValue.includes("enter phone number")) {
+                        document.getElementById('phonenumber').value = txtValue.replace("enter phone number", "");;
+                    }
+                    if (txtValue.includes("enter message")) {
+                        document.getElementById('message').value = txtValue.replace("enter message", "");;
+                    }
+
+                    if (txtValue.includes("submit")) {
+                        // alert("submitted successfully.")
+                        // window.setTimeout('alert("Message goes here");window.close();', 5000);
+                        document.body.scrollTop = 0;
+                        document.documentElement.scrollTop = 0
+
+                        document.getElementById('formMessage').innerHTML = "Form submitted successfully.";
+                        window.setTimeout('document.getElementById("formMessage").innerHTML = ""', 5000);
+                        window.setTimeout(" document.getElementById('firstname').value = ''", 5000);
+                        window.setTimeout('document.getElementById("lastname").value = ""', 5000);
+                        window.setTimeout('document.getElementById("phonenumber").value = ""', 5000);
+                        window.setTimeout('document.getElementById("message").value = ""', 5000);
+
+                    }
+
+
+                    // Choose which result may be useful for you
+
+                    //console.log("Interim:", interim_transcript);
+
+                    console.log("Final:", final_transcript);
+
+                    //console.log("Simple:", e.results[0][0].transcript);
+                };
+
+
+                recognition.onerror = function(e) {
+                    //  recognition.stop();
+                }
+
+            }
+        }
+
+        window.onload = startDictation;
+    </script>
+</body>
+
 </html>

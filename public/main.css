@@ -134,6 +134,8 @@ footer.footer {
 
 .navbar-brand {
   padding: 0px;
+  width: 199px;
+  height: 65px;
 }
 .navbar-brand > img {
   padding: 0px;

@@ -41,13 +41,13 @@ class Home extends PureComponent<IHomeProps, IHomeState> {
           </div>
         </header>
   
-        <section className="features-icons bg-light text-center">
+        <section className="features-icons bg-info text-center">
           <div className="container">
             <div className="row">
               <div className="col-lg-4">
                 <div className="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
                   <div className="features-icons-icon d-flex">
-                    <i className="fa fa-desktop m-auto text-primary"></i>
+                    <i className="fa fa-desktop m-auto text-white"></i>
                   </div>
                   <h3>Fully Responsive</h3>
                   <p className="lead mb-0">This theme will look great on any device, no matter the size!</p>
@@ -56,7 +56,7 @@ class Home extends PureComponent<IHomeProps, IHomeState> {
               <div className="col-lg-4">
                 <div className="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">
                   <div className="features-icons-icon d-flex">
-                    <i className="fa fa-cube m-auto text-primary"></i>
+                    <i className="fa fa-cube m-auto text-white"></i>
                   </div>
                   <h3>Bootstrap 4 Ready</h3>
                   <p className="lead mb-0">Featuring the latest build of the new Bootstrap 4 framework!</p>
@@ -65,7 +65,7 @@ class Home extends PureComponent<IHomeProps, IHomeState> {
               <div className="col-lg-4">
                 <div className="features-icons-item mx-auto mb-0 mb-lg-3">
                   <div className="features-icons-icon d-flex">
-                    <i className="fa fa-check-circle-o m-auto text-primary"></i>
+                    <i className="fa fa-check-circle-o m-auto text-white"></i>
                   </div>
                   <h3>Easy to Use</h3>
                   <p className="lead mb-0">Ready to use with your own content, or customize the source files!</p>
@@ -85,14 +85,14 @@ class Home extends PureComponent<IHomeProps, IHomeState> {
                 <p className="lead mb-0">When you use a theme created by Start Bootstrap, you know that the theme will look great on any device, whether it's a phone, tablet, or desktop the page will behave responsively!</p>
               </div>
             </div>
-            <div className="row no-gutters">
+            <div className="row no-gutters bg-info">
               <div className="col-lg-6 text-white showcase-img2" style={{ backgroundImage: `url('img/bg-showcase-2.jpg'})` }}></div>
               <div className="col-lg-6 my-auto showcase-text">
                 <h2>Updated For Bootstrap 4</h2>
                 <p className="lead mb-0">Newly improved, and full of great utility classes, Bootstrap 4 is leading the way in mobile responsive web development! All of the themes on Start Bootstrap are now using Bootstrap 4!</p>
               </div>
             </div>
-            <div className="row no-gutters">
+            <div className="row no-gutters bg-info">
               <div className="col-lg-6 order-lg-2 text-white showcase-img3" style={{ backgroundImage: `url('img/bg-showcase-3.jpg'})` }}></div>
               <div className="col-lg-6 order-lg-1 my-auto showcase-text">
                 <h2>Easy to Use &amp; Customize</h2>

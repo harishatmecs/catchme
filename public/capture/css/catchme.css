@@ -3,15 +3,19 @@
   background: #eee;
   margin: 0px auto;
   cursor: text;
-  max-height: calc(100vh - 5px);
+  max-height: calc(100vh);
   overflow: auto;
-  border: 3px solid #ff7373;
+  border: 5px solid #ff0000;
   z-index: 99999;
   top: 0px;
   width: 100%;
 }
+.catchMeCapturedScreen {
+  text-align: center;
+}
 .catchMeCapturedScreen img {
   user-select: none;
+  width: 100%;
 }
 .catchMeCanvas {
   width: 100%;
@@ -20,12 +24,12 @@
 .catchMeScreenContainer .catchMeCloseMainContainer {
   position: absolute;
   top: 10px;
-  right: 15px;
+  right: 30px;
   cursor: pointer;
   box-sizing: border-box;
-  width: 20px;
-  height: 20px;
-  border: 3px solid #ff0000;
+  width: 25px;
+  height: 25px;
+  border: 0px solid #ff0000;
   border-radius: 100%;
   background: -webkit-linear-gradient(
       -45deg,
@@ -112,7 +116,7 @@
   border-radius: 0px;
   box-shadow: none;
   transition: none;
-  margin: 5px 6px 5px 6px;
+  margin: 7px 7px 7px 7px;
   cursor: pointer;
 }
 input[type="color"] {

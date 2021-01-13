@@ -37,10 +37,8 @@ function addStyleSheet(fileName) {
     head.appendChild(link);
 } 
 function loadHTML(){
-    var modalHTML="<div class='catchMeScreenContainer hide'>";
-    modalHTML+="<div class='catchMeCloseMainContainer'></div>";    
+    var modalHTML="<div class='catchMeScreenContainer hide'>";   
     modalHTML+="<div class='catchMeToolbar'>"; 
-
     modalHTML+="<ul class='catchMeToolbarItems'>";
     modalHTML+="<li class='catchToolbarItem active' id='Text' title='Text'><i class='fa fa-font'></i></li>";
     modalHTML+="<li class='catchToolbarItem' id='Rectangle' title='Rectangle'><i class='fa fa-square-o'></i></li>";
@@ -53,32 +51,7 @@ function loadHTML(){
     modalHTML+="<li class='catchToolbarItem' id='Undo' title='Undo'><i class='fa fa-undo'></i></li>"; 
     modalHTML+="<li class='catchToolbarItem' id='Submit' title='Submit the Ticket' style='padding:1px 0.8em;background: #337ab7;'><i><a class='catchMeRequestForm'>Submit</a></i></li>";
     modalHTML+="</ul>"; 
-
-
-      modalHTML+="<div class='inputGroup'>";
-      modalHTML += '<label>Marker Type:</label><select class="catchMeSelect catchMePointerType">'; 
-      modalHTML += '<option name="Pointer" value="Pointer">Pointer</option>'; 
-      // modalHTML += '<option name="Line" value="Line">Line</option>';
-      // modalHTML += '<option name="Draw" value="Draw">Draw</option>'; 
-      modalHTML += '</select>'; 
-      modalHTML += '<label>Color:</label><select class="catchMeSelect catchMePointerColor">'; 
-      modalHTML += '<option name="red" value="red">Red</option>'; 
-      modalHTML += '<option name="black" value="black">Black</option>'; 
-      modalHTML += '<option name="blue" value="blue">Blue</option>'; 
-      modalHTML += '<option name="green" value="green">Green</option>';
-      modalHTML += '<option name="yellow" value="yellow">Yellow</option>'; 
-      modalHTML += '<option name="gray" value="gray">Gray</option>'; 
-      modalHTML += '</select>'; 
-      modalHTML += '<label>Width:</label><select class="catchMeSelect catchMePointerWidth">';  
-      modalHTML += '<option name="3" value="3">3</option>';
-      modalHTML += '<option name="5" value="5">5</option>'; 
-      modalHTML += '<option name="7" value="7">7</option>';
-      modalHTML += '<option name="9" value="9">9</option>'; 
-      modalHTML += '<option name="11" value="11">11</option>'; 
-      modalHTML += '</select>'; 
-      modalHTML += '<button class="undoCatchMePoints" style="margin-left: 5px;">Undo</button>';
-      modalHTML += '<button class="catchMeRequestForm" style="margin-left: 5px;">Raise Ticket</button>'; 
-      modalHTML+="</div>";  
+    modalHTML+="<div class='catchMeCloseMainContainer' title='Close Window'><i class='fa fa-close'></i></div>"; 
     modalHTML+="</div>";
     modalHTML+="<div class='catchMeRaiseTicketContainer hide'></div>";
     modalHTML+="<div class='catchMeCapturedScreen'></div>"; 

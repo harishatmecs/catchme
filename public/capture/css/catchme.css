@@ -27,11 +27,12 @@
   right: 30px;
   cursor: pointer;
   box-sizing: border-box;
-  width: 25px;
-  height: 25px;
+  width: 20px;
+  height: 20px;
   border: 0px solid #ff0000;
   border-radius: 100%;
-  background: -webkit-linear-gradient(
+  text-align: center;
+  /* background: -webkit-linear-gradient(
       -45deg,
       transparent 0%,
       transparent 46%,
@@ -41,10 +42,15 @@
       transparent 100%
     ),
     -webkit-linear-gradient(45deg, transparent 0%, transparent 46%, white 46%, white
-          56%, transparent 56%, transparent 100%);
+          56%, transparent 56%, transparent 100%); */
   background-color: #ff0000;
   box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
+}
+.catchMeScreenContainer .catchMeCloseMainContainer i {
+  color: #fff;
+  vertical-align: top;
+  line-height: 18px;
 }
 .catchMeScreenContainer .capturedScreen img {
   display: inline-block;
@@ -131,11 +137,12 @@ input[type="color"]::-webkit-color-swatch {
 }
 .catchMeRequestForm {
   font-size: 16px;
-  line-height: 24px;
   color: #fff;
   font-style: normal;
   text-decoration: non;
   cursor: pointer;
+  vertical-align: top;
+  line-height: 35px;
 }
 .catchMeRequestForm:hover {
   color: #ccc;
